@@ -1,0 +1,38 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Movie {
+  """the id of the movie"""
+  _id: String!
+  title: String!
+
+  """price in USD"""
+  price: Int!
+}
+
+type Query {
+  movies: [Movie!]!
+  movie(id: String!): Movie!
+}
+
+type Mutation {
+  createMovie(createMovieInput: CreateMovieInput!): Movie!
+  updateMovie(updateMovieInput: UpdateMovieInput!): Movie!
+  removeMovie(id: String!): Movie!
+}
+
+input CreateMovieInput {
+  title: String!
+
+  """price in USD"""
+  price: Int!
+}
+
+input UpdateMovieInput {
+  title: String
+
+  """price in USD"""
+  price: Int
+  id: String!
+}
