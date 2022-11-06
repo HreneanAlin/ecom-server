@@ -2,13 +2,24 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type CheckoutSession {
+  """the id of the checkout session"""
+  _id: String!
+  url: String!
+}
+
 type Movie {
   """the id of the movie"""
   _id: String!
   title: String!
+  description: String!
 
   """price in USD"""
   price: Int!
+  onSale: Boolean!
+
+  """the checkouts of a movie"""
+  checkoutSessions: [CheckoutSession!]!
 }
 
 type Query {
@@ -20,19 +31,33 @@ type Mutation {
   createMovie(createMovieInput: CreateMovieInput!): Movie!
   updateMovie(updateMovieInput: UpdateMovieInput!): Movie!
   removeMovie(id: String!): Movie!
+  createCheckoutSession(createCheckoutSession: CreateCheckoutSession!): CheckoutSession!
 }
 
 input CreateMovieInput {
   title: String!
+  description: String!
 
   """price in USD"""
   price: Int!
+  onSale: Boolean
 }
 
 input UpdateMovieInput {
   title: String
+  description: String
 
   """price in USD"""
   price: Int
+  onSale: Boolean
   id: String!
+}
+
+input CreateCheckoutSession {
+  products: [MovieInput!]!
+}
+
+input MovieInput {
+  movieId: String!
+  quantity: Int!
 }

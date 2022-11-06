@@ -9,5 +9,6 @@ import { Movie, MovieSchema } from './entities/movie.entity';
     MongooseModule.forFeature([{ name: Movie.name, schema: MovieSchema }]),
   ],
   providers: [MoviesResolver, MoviesService],
+  exports: [MoviesService],
 })
 export class MoviesModule {}
