@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema } from 'mongoose';
+import { MovieDto } from '../dto/movie.dto';
 
 @ObjectType()
 @Schema()
@@ -9,8 +10,42 @@ export class CheckoutSession {
   _id: MongooseSchema.Types.ObjectId;
 
   @Field()
+  @Prop({ unique: true })
+  stripeSessionId: string;
+
+  @Field()
   @Prop()
   url: string;
+
+  @Field(() => [MovieDto])
+  @Prop(
+    raw({
+      type: [
+        {
+          title: {
+            type: String,
+          },
+          description: {
+            type: String,
+          },
+          price: {
+            type: Number,
+          },
+          onSale: {
+            type: Boolean,
+          },
+          quantity: {
+            type: Number,
+          },
+        },
+      ],
+    }),
+  )
+  movies: MovieDto[];
+
+  @Field()
+  @Prop()
+  status: string;
 }
 
 export type CheckoutSessionDocument = CheckoutSession & Document;

@@ -17,7 +17,7 @@ export class Movie {
   @Prop()
   description: string;
 
-  @Field(() => Int, { description: 'price in USD' })
+  @Field(() => Number, { description: 'price in USD' })
   @Prop()
   price: number;
 

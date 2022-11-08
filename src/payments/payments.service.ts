@@ -29,18 +29,32 @@ export class PaymentsService {
         return {
           price: movie.stripePriceId,
           quantity,
+          movie,
         };
       }),
     );
 
     const session = await stripe.checkout.sessions.create({
-      line_items,
+      line_items: line_items.map((item) => ({
+        quantity: item.quantity,
+        price: item.price,
+      })),
       mode: 'payment',
       success_url: `${WEB_URL}?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${WEB_URL}?canceled=true`,
     });
     const createdCheckoutSession = await this.checkoutSessionModel.create({
       url: session.url,
+      movies: line_items.map((item) => ({
+        description: item.movie.description,
+        onSale: item.movie.onSale,
+        price: item.movie.price,
+        title: item.movie.title,
+        _id: item.movie._id,
+        quantity: item.quantity,
+      })),
+      status: session.status,
+      stripeSessionId: session.id,
     });
 
     const checkoutSession = await createdCheckoutSession.save();

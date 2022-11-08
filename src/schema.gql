@@ -2,10 +2,22 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type MovieDto {
+  _id: String!
+  title: String!
+  description: String!
+  price: Float!
+  onSale: Boolean!
+  quantity: Int!
+}
+
 type CheckoutSession {
   """the id of the checkout session"""
   _id: String!
+  stripeSessionId: String!
   url: String!
+  movies: [MovieDto!]!
+  status: String!
 }
 
 type Movie {
@@ -15,7 +27,7 @@ type Movie {
   description: String!
 
   """price in USD"""
-  price: Int!
+  price: Float!
   onSale: Boolean!
 
   """the checkouts of a movie"""
