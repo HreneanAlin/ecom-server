@@ -37,6 +37,7 @@ type Movie {
 type Query {
   movies: [Movie!]!
   movie(id: String!): Movie!
+  checkoutSession(id: String!): CheckoutSession!
 }
 
 type Mutation {

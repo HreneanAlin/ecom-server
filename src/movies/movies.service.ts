@@ -73,26 +73,30 @@ export class MoviesService {
           currency: 'usd',
         });
 
-        await this.movieModel.findByIdAndUpdate(id, {
-          ...updateMovieInput,
-          stripePriceId: newPrice.id,
-        });
+        await this.movieModel
+          .findByIdAndUpdate(id, {
+            ...updateMovieInput,
+            stripePriceId: newPrice.id,
+          })
+          .exec();
         return this.findOne(id);
       }
     }
-    await this.movieModel.findByIdAndUpdate(id, updateMovieInput);
+    await this.movieModel.findByIdAndUpdate(id, updateMovieInput).exec();
     return this.findOne(id);
   }
 
   async remove(id: string): Promise<Movie> {
     const movie = await this.findOne(id);
-    await this.movieModel.deleteOne({ _id: id });
+    await this.movieModel.deleteOne({ _id: id }).exec();
     return movie;
   }
 
   async addCheckoutToMovie(movieId: string, checkoutSession: CheckoutSession) {
-    await this.movieModel.findByIdAndUpdate(movieId, {
-      $addToSet: { checkoutSessions: [checkoutSession._id] },
-    });
+    await this.movieModel
+      .findByIdAndUpdate(movieId, {
+        $addToSet: { checkoutSessions: [checkoutSession._id] },
+      })
+      .exec();
   }
 }

@@ -7,6 +7,7 @@ import {
   CheckoutSessionSchema,
 } from './entities/checkoutSession.entity';
 import { MoviesModule } from 'src/movies/movies.module';
+import { CheckoutSessionService } from './checkout-session.service';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { MoviesModule } from 'src/movies/movies.module';
       { name: CheckoutSession.name, schema: CheckoutSessionSchema },
     ]),
   ],
-  providers: [PaymentsResolver, PaymentsService],
+  providers: [PaymentsResolver, PaymentsService, CheckoutSessionService],
+  exports: [CheckoutSessionService],
 })
 export class PaymentsModule {}
