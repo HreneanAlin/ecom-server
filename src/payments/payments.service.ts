@@ -33,7 +33,7 @@ export class PaymentsService {
         price: item.price,
       })),
       mode: 'payment',
-      success_url: `${WEB_URL}?success=true&session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${WEB_URL}/success-pay/{CHECKOUT_SESSION_ID}`,
       cancel_url: `${WEB_URL}?canceled=true`,
     });
     const checkoutSession = await this.checkoutSessionService.create({
