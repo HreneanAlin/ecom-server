@@ -8,10 +8,12 @@ import {
 } from '@nestjs/common';
 import { WebhooksService } from './webhooks.service';
 import { Request } from 'express';
+import { Public } from 'src/common/decorators/public.decorator';
 @Controller('webhooks')
 export class WebhooksController {
   constructor(private readonly webhooksService: WebhooksService) {}
 
+  @Public()
   @Post()
   webhook(@Req() req: RawBodyRequest<Request>) {
     try {

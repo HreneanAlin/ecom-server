@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { STRIPE_WEBHOOK_SECRET } from 'src/helpers/constants';
+import { STRIPE_WEBHOOK_SECRET } from 'src/common/helpers/constants';
 import { CheckoutSessionService } from 'src/payments/checkout-session.service';
-import { stripe } from 'src/stripe';
+import { stripe } from 'src/common/stripe';
 import { Stripe } from 'stripe';
 @Injectable()
 export class WebhooksService {

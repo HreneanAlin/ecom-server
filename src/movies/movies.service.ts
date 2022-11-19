@@ -5,9 +5,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Movie, MovieDocument } from './entities/movie.entity';
 import { Model } from 'mongoose';
 import { CheckoutSession } from 'src/payments/entities/checkoutSession.entity';
-import { stripe } from '../stripe';
+import { stripe } from '../common/stripe';
 @Injectable()
 export class MoviesService {
+  
   constructor(
     @InjectModel(Movie.name) private movieModel: Model<MovieDocument>,
   ) {}

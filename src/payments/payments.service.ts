@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { WEB_URL } from 'src/helpers/constants';
+import { WEB_URL } from 'src/common/helpers/constants';
 import { MoviesService } from 'src/movies/movies.service';
-import { stripe } from 'src/stripe';
+import { stripe } from 'src/common/stripe';
 import { CheckoutSessionService } from './checkout-session.service';
 import { CreateCheckoutSession } from './dto/create-checkout-session.input';
 import { CheckoutSession } from './entities/checkoutSession.entity';

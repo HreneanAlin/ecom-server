@@ -34,6 +34,33 @@ type Movie {
   checkoutSessions: [CheckoutSession!]!
 }
 
+type MovieWithQuantityDTO {
+  movie: Movie!
+  quantity: Int!
+}
+
+type TokensDto {
+  token: String!
+  refreshToken: String!
+}
+
+type UserDto {
+  _id: String!
+  firstName: String!
+  lastName: String!
+  email: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  payments: [CheckoutSession!]!
+  movies: [MovieWithQuantityDTO!]!
+  tokens: TokensDto!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type Query {
   movies: [Movie!]!
   movie(id: String!): Movie!
@@ -45,6 +72,9 @@ type Mutation {
   updateMovie(updateMovieInput: UpdateMovieInput!): Movie!
   removeMovie(id: String!): Movie!
   createCheckoutSession(createCheckoutSession: CreateCheckoutSession!): CheckoutSession!
+  signUpLocal(createUserInput: CreateUser!): UserDto!
+  signInLocal(signInLocal: SignInLocal!): UserDto!
+  refreshTokens: TokensDto!
 }
 
 input CreateMovieInput {
@@ -73,4 +103,16 @@ input CreateCheckoutSession {
 input MovieInput {
   movieId: String!
   quantity: Int!
+}
+
+input CreateUser {
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+}
+
+input SignInLocal {
+  email: String!
+  password: String!
 }
