@@ -3,6 +3,7 @@ import { MoviesService } from './movies.service';
 import { Movie } from './entities/movie.entity';
 import { CreateMovieInput } from './dto/create-movie.input';
 import { UpdateMovieInput } from './dto/update-movie.input';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Resolver(() => Movie)
 export class MoviesResolver {
@@ -13,11 +14,13 @@ export class MoviesResolver {
     return this.moviesService.create(createMovieInput);
   }
 
+  @Public()
   @Query(() => [Movie], { name: 'movies' })
   findAll() {
     return this.moviesService.findAll();
   }
 
+  @Public()
   @Query(() => Movie, { name: 'movie' })
   findOne(@Args('id', { type: () => String }) id: string) {
     return this.moviesService.findOne(id);

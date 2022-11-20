@@ -17,7 +17,7 @@ import { ITokens } from 'src/common/interfaces';
 import { mapUserToUserDto, UserDto } from './dto/user.dto';
 import { SignInLocal } from './dto/sign-in-local.input';
 import { TokensDto } from './dto/tokens.dto';
-import { User } from './entities/user.entity';
+import { User, UserDocument } from './entities/user.entity';
 import {
   mapUserToUserWithTokensDto,
   UserWithTokensDto,
@@ -103,8 +103,7 @@ export class AuthService {
     };
   }
 
-  async signOut(userId: string): Promise<SignOutDto> {
-    const user = await this.usersService.findOne(userId);
+  async signOut(user: UserDocument): Promise<SignOutDto> {
     user.hashRefreshToken = null;
     await user.save();
     return {

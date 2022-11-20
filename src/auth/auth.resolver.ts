@@ -11,7 +11,7 @@ import { TokensDto } from './dto/tokens.dto';
 import { UserRefreshDTO } from './dto/user-refresh.dto';
 import { UserWithTokensDto } from './dto/user-with-tokens.dto';
 import { UserDto } from './dto/user.dto';
-import { User } from './entities/user.entity';
+import { User, UserDocument } from './entities/user.entity';
 
 @Resolver()
 export class AuthResolver {
@@ -44,7 +44,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => SignOutDto)
-  signOut(@CurrentUser() user: User) {
-    return this.authService.signOut(String(user._id));
+  signOut(@CurrentUser() user: UserDocument) {
+    return this.authService.signOut(user);
   }
 }
