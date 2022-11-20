@@ -29,16 +29,9 @@ export class UserDto {
 
   @Field(() => [MovieWithQuantityDTO])
   movies: MovieWithQuantityDTO[];
-
-  @Field(() => TokensDto)
-  tokens: TokensDto;
 }
 
-export const mapUserToUserDto = (
-  user: User,
-  token: string,
-  refreshToken: string,
-): UserDto => {
+export const mapUserToUserDto = (user: User): UserDto => {
   return {
     _id: user._id,
     firstName: user.firstName,
@@ -48,9 +41,5 @@ export const mapUserToUserDto = (
     updatedAt: user.updatedAt,
     movies: user.movies,
     payments: user.payments,
-    tokens: {
-      token,
-      refreshToken,
-    },
   };
 };

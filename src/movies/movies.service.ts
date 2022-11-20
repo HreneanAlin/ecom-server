@@ -8,7 +8,6 @@ import { CheckoutSession } from 'src/payments/entities/checkoutSession.entity';
 import { stripe } from '../common/stripe';
 @Injectable()
 export class MoviesService {
-  
   constructor(
     @InjectModel(Movie.name) private movieModel: Model<MovieDocument>,
   ) {}
@@ -23,12 +22,11 @@ export class MoviesService {
       currency: 'usd',
     });
     console.log(product.id);
-    const createdMovie = await this.movieModel.create({
+    return this.movieModel.create({
       ...createMovieInput,
       stripePriceId: stripePrice.id,
       stripeProductId: product.id,
     });
-    return createdMovie.save();
   }
 
   findAll(): Promise<Movie[]> {

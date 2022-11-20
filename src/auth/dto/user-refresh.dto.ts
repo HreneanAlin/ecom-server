@@ -1,5 +1,5 @@
-export class UserRefreshDTO {
-  sub: string;
-  email: string;
+import { JwtRefreshDto } from './jwt-refresh-payload.dto';
+
+export class UserRefreshDTO extends JwtRefreshDto {
   refreshToken: string;
 }

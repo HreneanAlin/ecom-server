@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUser } from './dto/create-user.input';
 import { UsersService } from './users.service';
 import * as argon2 from 'argon2';
@@ -13,6 +17,12 @@ import { ITokens } from 'src/common/interfaces';
 import { mapUserToUserDto, UserDto } from './dto/user.dto';
 import { SignInLocal } from './dto/sign-in-local.input';
 import { TokensDto } from './dto/tokens.dto';
+import { User } from './entities/user.entity';
+import {
+  mapUserToUserWithTokensDto,
+  UserWithTokensDto,
+} from './dto/user-with-tokens.dto';
+import { SignOutDto } from './dto/sign-out.dto';
 
 @Injectable()
 export class AuthService {
@@ -36,7 +46,6 @@ export class AuthService {
       this.jwtService.signAsync(
         {
           sub: _id,
-          email,
         },
         {
           expiresIn: REFRESH_TOKEN_EXPIRATION_SECONDS,
@@ -50,16 +59,19 @@ export class AuthService {
     };
   }
 
-  async signUpLocal(createUser: CreateUser): Promise<UserDto> {
+  async signUpLocal(createUser: CreateUser): Promise<UserWithTokensDto> {
     createUser.password = await argon2.hash(createUser.password);
     const user = await this.usersService.create(createUser);
     const { token, refreshToken } = await this.getTokens(user._id, user.email);
     user.hashRefreshToken = await argon2.hash(refreshToken);
     await user.save();
-    return mapUserToUserDto(user, token, refreshToken);
+    return mapUserToUserWithTokensDto(user, token, refreshToken);
   }
 
-  async signInLocal({ email, password }: SignInLocal) {
+  async signInLocal({
+    email,
+    password,
+  }: SignInLocal): Promise<UserWithTokensDto> {
     const user = await this.usersService.findOneByEmail(email);
     if (!user) throw new BadRequestException('wrong email');
     const passwordMatches = await argon2.verify(user.password, password);
@@ -67,18 +79,17 @@ export class AuthService {
     const { token, refreshToken } = await this.getTokens(user.id, user.email);
     user.hashRefreshToken = await argon2.hash(refreshToken);
     await user.save();
-    return mapUserToUserDto(user, token, refreshToken);
+    return mapUserToUserWithTokensDto(user, token, refreshToken);
   }
 
   async refreshTokens(_id: string, refreshToken: string): Promise<TokensDto> {
     const user = await this.usersService.findOne(_id);
-    if (!user) throw new BadRequestException('Something went wrong ');
+    if (!user?.hashRefreshToken) throw new UnauthorizedException();
     const refreshTokensMatches = await argon2.verify(
       user.hashRefreshToken,
       refreshToken,
     );
-    if (!refreshTokensMatches)
-      throw new BadRequestException('Something went wrong');
+    if (!refreshTokensMatches) throw new UnauthorizedException();
 
     const { token, refreshToken: newRefreshToken } = await this.getTokens(
       _id,
@@ -90,5 +101,18 @@ export class AuthService {
       token,
       refreshToken,
     };
+  }
+
+  async signOut(userId: string): Promise<SignOutDto> {
+    const user = await this.usersService.findOne(userId);
+    user.hashRefreshToken = null;
+    await user.save();
+    return {
+      success: true,
+    };
+  }
+
+  mapToUserDto(user: User): UserDto {
+    return mapUserToUserDto(user);
   }
 }

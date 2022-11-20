@@ -3,7 +3,6 @@ import { MoviesService } from './movies.service';
 import { Movie } from './entities/movie.entity';
 import { CreateMovieInput } from './dto/create-movie.input';
 import { UpdateMovieInput } from './dto/update-movie.input';
-import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
 @Resolver(() => Movie)
 export class MoviesResolver {

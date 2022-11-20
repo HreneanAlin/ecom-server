@@ -18,10 +18,7 @@ export class CheckoutSessionService {
   async create(
     checkoutSessionDto: CreateCheckoutSessionDto,
   ): Promise<CheckoutSession> {
-    const createdCheckoutSession = await this.checkoutSessionModel.create(
-      checkoutSessionDto,
-    );
-    return createdCheckoutSession.save();
+    return this.checkoutSessionModel.create(checkoutSessionDto);
   }
 
   findOneByStripeId(stripeSessionId: string): Promise<CheckoutSession> {

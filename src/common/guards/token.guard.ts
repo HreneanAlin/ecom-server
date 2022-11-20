@@ -10,6 +10,7 @@ export class TokenGuard extends AuthGuard('jwt') {
   }
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
+
     return ctx.getContext().req;
   }
   canActivate(context: ExecutionContext) {
@@ -21,6 +22,7 @@ export class TokenGuard extends AuthGuard('jwt') {
     if (isPublic) {
       return true;
     }
+
     return super.canActivate(context);
   }
 }
