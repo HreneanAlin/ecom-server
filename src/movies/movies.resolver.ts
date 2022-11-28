@@ -1,8 +1,8 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { MoviesService } from './movies.service';
 import { Movie } from './entities/movie.entity';
-import { CreateMovieInput } from './dto/create-movie.input';
-import { UpdateMovieInput } from './dto/update-movie.input';
+import { CreateMovieInput } from './inputs/create-movie.input';
+import { UpdateMovieInput } from './inputs/update-movie.input';
 import { Public } from 'src/common/decorators/public.decorator';
 
 @Resolver(() => Movie)

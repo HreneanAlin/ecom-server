@@ -1,6 +1,6 @@
 import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { CheckoutSessionService } from './checkout-session.service';
-import { CreateCheckoutSession } from './dto/create-checkout-session.input';
+import { CreateCheckoutSession } from './inputs/create-checkout-session.input';
 import { CheckoutSession } from './entities/checkoutSession.entity';
 import { PaymentsService } from './payments.service';
 

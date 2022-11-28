@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateMovieInput } from './dto/create-movie.input';
-import { UpdateMovieInput } from './dto/update-movie.input';
+import { CreateMovieInput } from './inputs/create-movie.input';
+import { UpdateMovieInput } from './inputs/update-movie.input';
 import { InjectModel } from '@nestjs/mongoose';
 import { Movie, MovieDocument } from './entities/movie.entity';
 import { Model } from 'mongoose';

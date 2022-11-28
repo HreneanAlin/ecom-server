@@ -6,5 +6,8 @@ export class TokensDto {
   token: string;
 
   @Field()
+  tokenExpiration: Date;
+
+  @Field()
   refreshToken: string;
 }

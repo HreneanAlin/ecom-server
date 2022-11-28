@@ -1,11 +1,18 @@
 import { UseGuards } from '@nestjs/common';
-import { Mutation, Resolver, Args, Query } from '@nestjs/graphql';
+import {
+  Mutation,
+  Resolver,
+  Args,
+  Query,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { Public } from 'src/common/decorators/public.decorator';
 import { RefreshTokenGuard } from 'src/common/guards';
 import { AuthService } from './auth.service';
-import { CreateUser } from './dto/create-user.input';
-import { SignInLocal } from './dto/sign-in-local.input';
+import { CreateUser } from './inputs/create-user.input';
+import { SignInLocal } from './inputs/sign-in-local.input';
 import { SignOutDto } from './dto/sign-out.dto';
 import { TokensDto } from './dto/tokens.dto';
 import { UserRefreshDTO } from './dto/user-refresh.dto';
@@ -13,7 +20,7 @@ import { UserWithTokensDto } from './dto/user-with-tokens.dto';
 import { UserDto } from './dto/user.dto';
 import { User, UserDocument } from './entities/user.entity';
 
-@Resolver()
+@Resolver(() => UserWithTokensDto)
 export class AuthResolver {
   constructor(private readonly authService: AuthService) {}
 

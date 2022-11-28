@@ -57,6 +57,7 @@ scalar DateTime
 
 type TokensDto {
   token: String!
+  tokenExpiration: DateTime!
   refreshToken: String!
 }
 

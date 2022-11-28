@@ -3,7 +3,7 @@ import { MovieWithQuantityDTO } from 'src/movies/dto/movie-with-quantity.dto';
 import { CheckoutSession } from 'src/payments/entities/checkoutSession.entity';
 import { Schema as MongooseSchema } from 'mongoose';
 import { User } from '../entities/user.entity';
-import { TokensDto } from './tokens.dto';
+
 @ObjectType()
 export class UserDto {
   @Field(() => String)

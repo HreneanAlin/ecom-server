@@ -3,7 +3,7 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateUser } from './dto/create-user.input';
+import { CreateUser } from './inputs/create-user.input';
 import { UsersService } from './users.service';
 import * as argon2 from 'argon2';
 import { JwtService } from '@nestjs/jwt';
@@ -15,7 +15,7 @@ import {
 } from 'src/common/helpers/constants';
 import { ITokens } from 'src/common/interfaces';
 import { mapUserToUserDto, UserDto } from './dto/user.dto';
-import { SignInLocal } from './dto/sign-in-local.input';
+import { SignInLocal } from './inputs/sign-in-local.input';
 import { TokensDto } from './dto/tokens.dto';
 import { User, UserDocument } from './entities/user.entity';
 import {
@@ -23,6 +23,8 @@ import {
   UserWithTokensDto,
 } from './dto/user-with-tokens.dto';
 import { SignOutDto } from './dto/sign-out.dto';
+import { decode } from 'jsonwebtoken';
+import { JwtPayload } from './dto/jwt-payload.dto';
 
 @Injectable()
 export class AuthService {
@@ -65,7 +67,12 @@ export class AuthService {
     const { token, refreshToken } = await this.getTokens(user._id, user.email);
     user.hashRefreshToken = await argon2.hash(refreshToken);
     await user.save();
-    return mapUserToUserWithTokensDto(user, token, refreshToken);
+    return mapUserToUserWithTokensDto(
+      user,
+      token,
+      this.getTokenExpirationDate(token),
+      refreshToken,
+    );
   }
 
   async signInLocal({
@@ -79,7 +86,12 @@ export class AuthService {
     const { token, refreshToken } = await this.getTokens(user.id, user.email);
     user.hashRefreshToken = await argon2.hash(refreshToken);
     await user.save();
-    return mapUserToUserWithTokensDto(user, token, refreshToken);
+    return mapUserToUserWithTokensDto(
+      user,
+      token,
+      this.getTokenExpirationDate(token),
+      refreshToken,
+    );
   }
 
   async refreshTokens(_id: string, refreshToken: string): Promise<TokensDto> {
@@ -90,16 +102,17 @@ export class AuthService {
       refreshToken,
     );
     if (!refreshTokensMatches) throw new UnauthorizedException();
-
     const { token, refreshToken: newRefreshToken } = await this.getTokens(
       _id,
       user.email,
     );
+    console.log(decode(token));
     user.hashRefreshToken = await argon2.hash(newRefreshToken);
     await user.save();
     return {
       token,
-      refreshToken,
+      tokenExpiration: this.getTokenExpirationDate(token),
+      refreshToken: newRefreshToken,
     };
   }
 
@@ -113,5 +126,10 @@ export class AuthService {
 
   mapToUserDto(user: User): UserDto {
     return mapUserToUserDto(user);
+  }
+
+  getTokenExpirationDate(token: string) {
+    const payload = decode(token) as unknown as JwtPayload;
+    return new Date(Number(payload.exp) * 1000);
   }
 }

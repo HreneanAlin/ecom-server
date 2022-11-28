@@ -11,6 +11,7 @@ export class UserWithTokensDto extends UserDto {
 export const mapUserToUserWithTokensDto = (
   user: User,
   token: string,
+  tokenExpiration: Date,
   refreshToken: string,
 ): UserWithTokensDto => {
   return {
@@ -24,6 +25,7 @@ export const mapUserToUserWithTokensDto = (
     payments: user.payments,
     tokens: {
       token,
+      tokenExpiration,
       refreshToken,
     },
   };
