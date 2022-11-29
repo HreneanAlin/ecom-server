@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import {
   Mutation,
   Resolver,
@@ -19,6 +19,7 @@ import { IUserRefreshDTO } from './interfaces/user-refresh.interface';
 import { UserWithTokensDto } from './dto/user-with-tokens.dto';
 import { UserDto } from './dto/user.dto';
 import { User, UserDocument } from './entities/user.entity';
+import { InjectUserInterceptor } from 'src/auth/interceptors/current-user.interceptor';
 
 @Resolver(() => UserWithTokensDto)
 export class AuthResolver {

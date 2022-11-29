@@ -25,16 +25,18 @@ import { ValidationError } from 'class-validator';
           const customError = error.extensions.response as {
             message: ValidationError[];
           };
-          return {
-            validationErrors: customError.message.map((mess) => {
-              return {
-                property: mess.property,
-                constraints: Object.values(mess.constraints),
-              };
-            }),
-            message: error.message,
-            statusCode: 400,
-          };
+          if (Array.isArray(customError.message)) {
+            return {
+              validationErrors: customError.message.map((mess) => {
+                return {
+                  property: mess.property,
+                  constraints: Object.values(mess.constraints).join(', '),
+                };
+              }),
+              message: error.message,
+              statusCode: 400,
+            };
+          }
         }
         return error;
       },
