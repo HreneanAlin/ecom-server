@@ -1,1 +1,1 @@
-export * from './Tokens';
+export * from './tokens.interface';

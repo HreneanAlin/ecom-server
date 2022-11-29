@@ -24,7 +24,7 @@ import {
 } from './dto/user-with-tokens.dto';
 import { SignOutDto } from './dto/sign-out.dto';
 import { decode } from 'jsonwebtoken';
-import { JwtPayload } from './dto/jwt-payload.dto';
+import { IJwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -129,7 +129,7 @@ export class AuthService {
   }
 
   getTokenExpirationDate(token: string) {
-    const payload = decode(token) as unknown as JwtPayload;
+    const payload = decode(token) as unknown as IJwtPayload;
     return new Date(Number(payload.exp) * 1000);
   }
 }

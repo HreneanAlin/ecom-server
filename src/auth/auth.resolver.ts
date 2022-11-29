@@ -15,7 +15,7 @@ import { CreateUser } from './inputs/create-user.input';
 import { SignInLocal } from './inputs/sign-in-local.input';
 import { SignOutDto } from './dto/sign-out.dto';
 import { TokensDto } from './dto/tokens.dto';
-import { UserRefreshDTO } from './dto/user-refresh.dto';
+import { IUserRefreshDTO } from './interfaces/user-refresh.interface';
 import { UserWithTokensDto } from './dto/user-with-tokens.dto';
 import { UserDto } from './dto/user.dto';
 import { User, UserDocument } from './entities/user.entity';
@@ -41,7 +41,7 @@ export class AuthResolver {
   @Public()
   @UseGuards(RefreshTokenGuard)
   @Mutation(() => TokensDto)
-  refreshTokens(@CurrentUser() user: UserRefreshDTO) {
+  refreshTokens(@CurrentUser() user: IUserRefreshDTO) {
     return this.authService.refreshTokens(user.sub, user.refreshToken);
   }
 

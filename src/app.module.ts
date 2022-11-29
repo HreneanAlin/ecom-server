@@ -11,7 +11,7 @@ import { WebhooksModule } from './webhooks/webhooks.module';
 import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { TokenGuard } from './common/guards';
-
+import { ValidationError } from 'class-validator';
 @Module({
   imports: [
     MoviesModule,
@@ -20,6 +20,24 @@ import { TokenGuard } from './common/guards';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      formatError: (error) => {
+        if (error.extensions.code === 'BAD_USER_INPUT') {
+          const customError = error.extensions.response as {
+            message: ValidationError[];
+          };
+          return {
+            validationErrors: customError.message.map((mess) => {
+              return {
+                property: mess.property,
+                constraints: Object.values(mess.constraints),
+              };
+            }),
+            message: error.message,
+            statusCode: 400,
+          };
+        }
+        return error;
+      },
     }),
     MongooseModule.forRoot(MONGODB_URL),
     PaymentsModule,

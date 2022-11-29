@@ -3,8 +3,8 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JWT_REFRESH_SECRET } from 'src/common/helpers/constants';
 import { Request } from 'express';
 import { Injectable } from '@nestjs/common';
-import { JwtRefreshDto } from '../dto/jwt-refresh-payload.dto';
-import { UserRefreshDTO } from '../dto/user-refresh.dto';
+import { IJwtRefreshDto } from '../interfaces/jwt-refresh-payload.interface';
+import { IUserRefreshDTO } from '../interfaces/user-refresh.interface';
 
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
@@ -19,7 +19,7 @@ export class RefreshTokenStrategy extends PassportStrategy(
       passReqToCallback: true,
     });
   }
-  validate(req: Request, payload: JwtRefreshDto): UserRefreshDTO {
+  validate(req: Request, payload: IJwtRefreshDto): IUserRefreshDTO {
     const refreshToken = req.get('authorization').replace('Bearer', '').trim();
     return {
       ...payload,
