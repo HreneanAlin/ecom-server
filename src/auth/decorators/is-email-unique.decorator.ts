@@ -18,6 +18,7 @@ export class IsEmailUniqueValidatorConstraint
     email: string,
     validationArguments?: ValidationArguments,
   ): Promise<boolean> {
+    console.log('hey');
     const user = await this.userService.findOneByEmail(email);
 
     return !user;

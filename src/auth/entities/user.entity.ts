@@ -50,7 +50,7 @@ export class User {
   @Field(() => [MovieWithQuantityDTO])
   @Prop(
     raw({
-      movies: [
+      type: [
         {
           movie: {
             type: MongooseSchema.Types.ObjectId,
@@ -61,6 +61,7 @@ export class User {
           },
         },
       ],
+      default: [],
     }),
   )
   movies: MovieWithQuantityDTO[];

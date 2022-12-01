@@ -18,6 +18,14 @@ export class UsersService {
     return this.userModel.findById(_id).exec();
   }
 
+  findOneComplete(_id: string): Promise<UserDocument> {
+    return this.userModel
+      .findById(_id)
+      .populate({ path: 'payments' })
+      .populate({ path: 'movies.movie' })
+      .exec();
+  }
+
   findOneByEmail(email: string): Promise<UserDocument> {
     return this.userModel.findOne({ email }).exec();
   }

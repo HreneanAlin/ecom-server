@@ -35,6 +35,7 @@ type Movie {
 }
 
 type MovieWithQuantityDTO {
+  _id: String!
   movie: Movie!
   quantity: Int!
 }

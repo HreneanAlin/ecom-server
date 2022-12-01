@@ -14,13 +14,13 @@ export class CreateUser {
   @Field()
   lastName: string;
 
-  @IsEmail()
   @IsEmailUnique()
+  @MaxLength(50)
+  @IsEmail()
   @Field()
   email: string;
 
   @MinLength(8)
-  @MaxLength(50)
   @Matches(/(?=.*?[A-Z])/, {
     message: 'Password must contain at least one upper case letter',
   })
@@ -33,6 +33,7 @@ export class CreateUser {
   @Matches(/(?=.*?[#?!@$%^&*-])/, {
     message: 'Password must contain at least one special character',
   })
+  @MaxLength(50)
   @Field()
   password: string;
 }

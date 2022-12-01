@@ -5,6 +5,7 @@ import { stripe } from 'src/common/stripe';
 import { CheckoutSessionService } from './checkout-session.service';
 import { CreateCheckoutSession } from './inputs/create-checkout-session.input';
 import { CheckoutSession } from './entities/checkoutSession.entity';
+import { UserDocument } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class PaymentsService {
@@ -13,9 +14,10 @@ export class PaymentsService {
     private checkoutSessionService: CheckoutSessionService,
   ) {}
 
-  async createCheckoutSession({
-    products,
-  }: CreateCheckoutSession): Promise<CheckoutSession> {
+  async createCheckoutSession(
+    { products }: CreateCheckoutSession,
+    currentUser: UserDocument,
+  ): Promise<CheckoutSession> {
     const line_items = await Promise.all(
       products.map(async ({ movieId, quantity }) => {
         const movie = await this.moviesService.findOne(movieId);
@@ -32,6 +34,7 @@ export class PaymentsService {
         quantity: item.quantity,
         price: item.price,
       })),
+      customer_email: currentUser.email,
       mode: 'payment',
       success_url: `${WEB_URL}/success-pay/{CHECKOUT_SESSION_ID}`,
       cancel_url: `${WEB_URL}?canceled=true`,
@@ -49,6 +52,8 @@ export class PaymentsService {
       status: session.status,
       stripeSessionId: session.id,
     });
+    currentUser.payments.push(checkoutSession);
+    await currentUser.save();
     for (const { movieId } of products) {
       await this.moviesService.addCheckoutToMovie(movieId, checkoutSession);
     }

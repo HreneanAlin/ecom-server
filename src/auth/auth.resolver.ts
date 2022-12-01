@@ -48,7 +48,7 @@ export class AuthResolver {
 
   @Query(() => UserDto)
   me(@CurrentUser() user: User) {
-    return this.authService.mapToUserDto(user);
+    return this.authService.me(user);
   }
 
   @Mutation(() => SignOutDto)

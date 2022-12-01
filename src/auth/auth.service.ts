@@ -124,8 +124,9 @@ export class AuthService {
     };
   }
 
-  mapToUserDto(user: User): UserDto {
-    return mapUserToUserDto(user);
+  async me(user: User): Promise<UserDto> {
+    const fullUser = await this.usersService.findOneComplete(String(user._id));
+    return mapUserToUserDto(fullUser);
   }
 
   getTokenExpirationDate(token: string) {
