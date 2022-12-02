@@ -1,13 +1,13 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import { CheckoutSession } from 'src/payments/entities/checkoutSession.entity';
 
 @ObjectType()
 @Schema()
 export class Movie {
   @Field(() => String, { description: 'the id of the movie' })
-  _id: MongooseSchema.Types.ObjectId;
+  _id: Types.ObjectId;
 
   @Field()
   @Prop()

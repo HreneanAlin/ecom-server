@@ -28,8 +28,15 @@ export class WebhooksService {
         session.customer_email,
       );
       for (const movieDto of checkoutSession.movies) {
-        const movie = await this.moviesService.findOne(String(movieDto._id));
-        user.movies.push({ quantity: movieDto.quantity, movie });
+        const existingMovie = user.movies.find((movie) =>
+          movieDto._id.equals(movie.movie._id),
+        );
+        if (existingMovie) {
+          existingMovie.quantity = existingMovie.quantity + movieDto.quantity;
+        } else {
+          const movie = await this.moviesService.findOne(String(movieDto._id));
+          user.movies.push({ quantity: movieDto.quantity, movie });
+        }
       }
       await user.save();
     }

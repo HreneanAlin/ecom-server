@@ -1,9 +1,9 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { Schema as MongooseSchema } from 'mongoose';
+import { Types } from 'mongoose';
 @ObjectType()
 export class MovieDto {
   @Field(() => String)
-  _id: MongooseSchema.Types.ObjectId;
+  _id: Types.ObjectId;
 
   @Field()
   title: string;
