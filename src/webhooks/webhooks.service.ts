@@ -12,7 +12,7 @@ export class WebhooksService {
     private readonly usersService: UsersService,
     private readonly moviesService: MoviesService,
   ) {}
-  async checkPaymentStatus(stripeSignature: string, payload: Buffer) {
+  async fulfillMoviesPayment(stripeSignature: string, payload: Buffer) {
     const event = stripe.webhooks.constructEvent(
       payload,
       stripeSignature,
@@ -25,7 +25,7 @@ export class WebhooksService {
           status: session.status,
         });
       const user = await this.usersService.findOneByEmail(
-        session.customer_email,
+        session.customer_details.email,
       );
       for (const movieDto of checkoutSession.movies) {
         const existingMovie = user.movies.find((movie) =>

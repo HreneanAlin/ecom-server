@@ -25,7 +25,7 @@ export class PaymentsResolver {
   }
 
   @Query(() => CheckoutSession, { name: 'checkoutSession' })
-  findOne(@Args('id') id: string) {
-    return this.checkoutSessionService.findOneByStripeId(id);
+  findOne(@CurrentUser() user: UserDocument, @Args('id') id: string) {
+    return this.checkoutSessionService.findCurrentUsersOneByStripeId(id, user);
   }
 }

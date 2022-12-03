@@ -6,6 +6,9 @@ import { CheckoutSessionService } from './checkout-session.service';
 import { CreateCheckoutSession } from './inputs/create-checkout-session.input';
 import { CheckoutSession } from './entities/checkoutSession.entity';
 import { UserDocument } from 'src/auth/entities/user.entity';
+import { MovieInput } from './inputs/movieInput.input';
+import { MovieToBuy } from './interfaces/movie-to-buy.interface';
+import Stripe from 'stripe';
 
 @Injectable()
 export class PaymentsService {
@@ -18,27 +21,17 @@ export class PaymentsService {
     { products }: CreateCheckoutSession,
     currentUser: UserDocument,
   ): Promise<CheckoutSession> {
-    const line_items = await Promise.all(
-      products.map(async ({ movieId, quantity }) => {
-        const movie = await this.moviesService.findOne(movieId);
-        return {
-          price: movie.stripePriceId,
-          quantity,
-          movie,
-        };
-      }),
-    );
-
-    const session = await stripe.checkout.sessions.create({
-      line_items: line_items.map((item) => ({
-        quantity: item.quantity,
-        price: item.price,
-      })),
-      customer_email: currentUser.email,
-      mode: 'payment',
-      success_url: `${WEB_URL}/success-pay/{CHECKOUT_SESSION_ID}`,
-      cancel_url: `${WEB_URL}?canceled=true`,
-    });
+    const line_items = await this.getMoviesToBuy(products);
+    let stripeCustomerId: string;
+    if (currentUser.stripeCustomerId) {
+      stripeCustomerId = currentUser.stripeCustomerId;
+    } else {
+      const stripeCustomer = await this.createStripeCustomer(currentUser);
+      currentUser.stripeCustomerId = stripeCustomer.id;
+      currentUser.save();
+      stripeCustomerId = stripeCustomer.id;
+    }
+    const session = await this.createSession(line_items, stripeCustomerId);
     const checkoutSession = await this.checkoutSessionService.create({
       url: session.url,
       movies: line_items.map((item) => ({
@@ -58,5 +51,46 @@ export class PaymentsService {
       await this.moviesService.addCheckoutToMovie(movieId, checkoutSession);
     }
     return checkoutSession;
+  }
+
+  private async getMoviesToBuy(products: MovieInput[]): Promise<MovieToBuy[]> {
+    return Promise.all(
+      products.map(async ({ movieId, quantity }) => {
+        const movie = await this.moviesService.findOne(movieId);
+        return {
+          price: movie.stripePriceId,
+          quantity,
+          movie,
+        };
+      }),
+    );
+  }
+
+  private async createSession(
+    moviesToBuy: MovieToBuy[],
+    stripeCustomerId: string,
+  ) {
+    return stripe.checkout.sessions.create({
+      line_items: moviesToBuy.map((item) => ({
+        quantity: item.quantity,
+        price: item.price,
+      })),
+      customer: stripeCustomerId,
+      mode: 'payment',
+      success_url: `${WEB_URL}/success-pay/{CHECKOUT_SESSION_ID}`,
+      cancel_url: `${WEB_URL}?canceled=true`,
+    });
+  }
+
+  private async createStripeCustomer(user: UserDocument) {
+    return stripe.customers.create({
+      email: user.email,
+      name: `${user.firstName} ${user.lastName}`,
+    });
+  }
+
+  private async getStripeCustomer(stripeId: string) {
+    const customer = await stripe.customers.retrieve(stripeId);
+    return customer as Stripe.Response<Stripe.Customer>;
   }
 }

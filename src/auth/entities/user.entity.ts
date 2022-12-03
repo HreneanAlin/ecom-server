@@ -68,6 +68,9 @@ export class User {
 
   @Prop()
   hashRefreshToken: string;
+
+  @Prop()
+  stripeCustomerId: string;
 }
 
 export type UserDocument = User & Document;

@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   ForbiddenException,
   Post,
@@ -20,7 +19,7 @@ export class WebhooksController {
     try {
       const payload = req.rawBody;
       const stripeSignature = req.headers['stripe-signature'] as string;
-      this.webhooksService.checkPaymentStatus(stripeSignature, payload);
+      this.webhooksService.fulfillMoviesPayment(stripeSignature, payload);
     } catch (err) {
       console.error(err);
       throw new ForbiddenException();

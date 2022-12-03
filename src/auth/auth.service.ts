@@ -125,7 +125,10 @@ export class AuthService {
   }
 
   async me(user: User): Promise<UserDto> {
-    const fullUser = await this.usersService.findOneComplete(String(user._id));
+    const fullUser = await this.usersService.findOne(String(user._id), [
+      'payments',
+      'movies.movie',
+    ]);
     return mapUserToUserDto(fullUser);
   }
 

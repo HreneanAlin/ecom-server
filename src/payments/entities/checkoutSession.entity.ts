@@ -1,13 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { MovieDto } from '../dto/movie.dto';
 
 @ObjectType()
 @Schema()
 export class CheckoutSession {
   @Field(() => String, { description: 'the id of the checkout session' })
-  _id: MongooseSchema.Types.ObjectId;
+  _id: Types.ObjectId;
 
   @Field()
   @Prop({ unique: true })

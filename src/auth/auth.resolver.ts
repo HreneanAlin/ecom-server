@@ -19,11 +19,15 @@ import { IUserRefreshDTO } from './interfaces/user-refresh.interface';
 import { UserWithTokensDto } from './dto/user-with-tokens.dto';
 import { UserDto } from './dto/user.dto';
 import { User, UserDocument } from './entities/user.entity';
-import { InjectUserInterceptor } from 'src/auth/interceptors/current-user.interceptor';
+import { CheckoutSession } from 'src/payments/entities/checkoutSession.entity';
+import { UsersService } from './users.service';
 
-@Resolver(() => UserWithTokensDto)
+@Resolver(() => UserDto)
 export class AuthResolver {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Public()
   @Mutation(() => UserWithTokensDto)
@@ -54,5 +58,10 @@ export class AuthResolver {
   @Mutation(() => SignOutDto)
   signOut(@CurrentUser() user: UserDocument) {
     return this.authService.signOut(user);
+  }
+
+  @ResolveField(() => [CheckoutSession])
+  openPayments(@Parent() user: UserDto) {
+    return this.usersService.filterOpenPayments(user);
   }
 }
