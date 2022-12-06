@@ -80,6 +80,9 @@ export class PaymentsService {
       })),
       customer: stripeCustomerId,
       mode: 'payment',
+      metadata: {
+        action: 'hostedCheckout',
+      },
       success_url: `${WEB_URL}/success-pay/{CHECKOUT_SESSION_ID}`,
       cancel_url: `${WEB_URL}?canceled=true`,
     });
@@ -98,7 +101,10 @@ export class PaymentsService {
       automatic_payment_methods: {
         enabled: true,
       },
-      metadata: this.formatPaymentIntentMetada(moviesToBuy),
+      metadata: {
+        action: 'customCheckout',
+        ...this.formatPaymentIntentMetada(moviesToBuy),
+      },
 
       customer: stripeCustomerId,
     });

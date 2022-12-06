@@ -23,15 +23,23 @@ export class WebhooksService {
       STRIPE_WEBHOOK_SECRET,
     );
 
-    switch (event.type) {
-      case 'checkout.session.completed':
-        const session = event.data.object as Stripe.Checkout.Session;
-        this.handleCompletedCheckoutSession(session);
-        break;
-      case 'payment_intent.succeeded':
-        const paymentIntent = event.data.object as Stripe.PaymentIntent;
-        this.handleSuccessfulPaymentIntent(paymentIntent);
-        break;
+    if (event.type === 'payment_intent.succeeded') {
+      const session = event.data.object as Stripe.PaymentIntent;
+      const action = session.metadata.action as string;
+
+      switch (action) {
+        case 'customCheckout':
+          const paymentIntent = event.data.object as Stripe.PaymentIntent;
+          await this.handleSuccessfulPaymentIntent(paymentIntent);
+          break;
+        default:
+          break;
+      }
+    }
+
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object as Stripe.Checkout.Session;
+      await this.handleCompletedCheckoutSession(session);
     }
   }
 
