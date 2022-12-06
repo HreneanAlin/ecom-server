@@ -14,6 +14,7 @@ import {
   PaymentIntentRecordSchema,
 } from './entities/payment-intent-record.entity';
 import { PaymentIntentRecordsService } from './payment-intent-records.service';
+import { StripeService } from './stripe.service';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { PaymentIntentRecordsService } from './payment-intent-records.service';
     PaymentsService,
     CheckoutSessionService,
     PaymentIntentRecordsService,
+    StripeService,
   ],
   exports: [CheckoutSessionService, PaymentIntentRecordsService],
 })
