@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MovieToBuy } from './interfaces/movie-to-buy.interface';
+import { MovieToBuy } from '../interfaces/movie-to-buy.interface';
 import { stripe } from 'src/common/stripe';
 import { WEB_URL } from 'src/common/helpers/constants';
 import { UserDocument } from 'src/auth/entities/user.entity';

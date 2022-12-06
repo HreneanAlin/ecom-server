@@ -3,12 +3,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserDocument } from 'src/auth/entities/user.entity';
 import { UsersService } from 'src/auth/users.service';
-import { CreateCheckoutSessionDto } from './dto/create-checkout-session.dto';
-import { UpdateStatusDto } from './dto/update-status.dto';
+import { CreateCheckoutSessionDto } from '../dto/create-checkout-session.dto';
+import { UpdateStatusDto } from '../dto/update-status.dto';
 import {
   CheckoutSession,
   CheckoutSessionDocument,
-} from './entities/checkoutSession.entity';
+} from '../entities/checkoutSession.entity';
 
 @Injectable()
 export class CheckoutSessionService {

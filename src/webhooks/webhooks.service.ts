@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { STRIPE_WEBHOOK_SECRET } from 'src/common/helpers/constants';
-import { CheckoutSessionService } from 'src/payments/checkout-session.service';
+import { CheckoutSessionService } from 'src/payments/services/checkout-session.service';
 import { stripe } from 'src/common/stripe';
 import { Stripe } from 'stripe';
 import { UsersService } from 'src/auth/users.service';
 import { MoviesService } from 'src/movies/movies.service';
-import { PaymentIntentRecordsService } from 'src/payments/payment-intent-records.service';
+import { PaymentIntentRecordsService } from 'src/payments/services/payment-intent-records.service';
 import { MovieDto } from 'src/payments/dto/movie.dto';
 import { UserDocument } from 'src/auth/entities/user.entity';
 @Injectable()

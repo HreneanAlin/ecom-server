@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { MoviesService } from 'src/movies/movies.service';
 import { CheckoutSessionService } from './checkout-session.service';
-import { CreatePaymentInput } from './inputs/create-payment.input';
-import { CheckoutSession } from './entities/checkoutSession.entity';
+import { CreatePaymentInput } from '../inputs/create-payment.input';
+import { CheckoutSession } from '../entities/checkoutSession.entity';
 import { UserDocument } from 'src/auth/entities/user.entity';
-import { MovieInput } from './inputs/movieInput.input';
-import { MovieToBuy } from './interfaces/movie-to-buy.interface';
-import { PaymentIntentDTO } from './dto/payment-intent.dto';
+import { MovieInput } from '../inputs/movieInput.input';
+import { MovieToBuy } from '../interfaces/movie-to-buy.interface';
+import { PaymentIntentDTO } from '../dto/payment-intent.dto';
 import { PaymentIntentRecordsService } from './payment-intent-records.service';
 import { StripeService } from './stripe.service';
 

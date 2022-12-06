@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PaymentsService } from './payments.service';
+import { PaymentsService } from './services/payments.service';
 import { PaymentsResolver } from './payments.resolver';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
@@ -7,14 +7,14 @@ import {
   CheckoutSessionSchema,
 } from './entities/checkoutSession.entity';
 import { MoviesModule } from 'src/movies/movies.module';
-import { CheckoutSessionService } from './checkout-session.service';
+import { CheckoutSessionService } from './services/checkout-session.service';
 import { AuthModule } from 'src/auth/auth.module';
 import {
   PaymentIntentRecord,
   PaymentIntentRecordSchema,
 } from './entities/payment-intent-record.entity';
-import { PaymentIntentRecordsService } from './payment-intent-records.service';
-import { StripeService } from './stripe.service';
+import { PaymentIntentRecordsService } from './services/payment-intent-records.service';
+import { StripeService } from './services/stripe.service';
 
 @Module({
   imports: [
