@@ -40,6 +40,10 @@ type MovieWithQuantityDTO {
   quantity: Int!
 }
 
+type PaymentIntentDTO {
+  clientSecret: String!
+}
+
 type UserDto {
   _id: String!
   firstName: String!
@@ -91,7 +95,8 @@ type Mutation {
   createMovie(createMovieInput: CreateMovieInput!): Movie!
   updateMovie(updateMovieInput: UpdateMovieInput!): Movie!
   removeMovie(id: String!): Movie!
-  createCheckoutSession(createCheckoutSession: CreateCheckoutSession!): CheckoutSession!
+  createCheckoutSession(createPayment: CreatePaymentInput!): CheckoutSession!
+  createPaymentIntent(createPayment: CreatePaymentInput!): PaymentIntentDTO!
   signUpLocal(createUserInput: CreateUser!): UserWithTokensDto!
   signInLocal(signInLocal: SignInLocal!): UserWithTokensDto!
   refreshTokens: TokensDto!
@@ -117,7 +122,7 @@ input UpdateMovieInput {
   id: String!
 }
 
-input CreateCheckoutSession {
+input CreatePaymentInput {
   products: [MovieInput!]!
 }
 

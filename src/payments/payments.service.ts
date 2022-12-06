@@ -3,22 +3,25 @@ import { WEB_URL } from 'src/common/helpers/constants';
 import { MoviesService } from 'src/movies/movies.service';
 import { stripe } from 'src/common/stripe';
 import { CheckoutSessionService } from './checkout-session.service';
-import { CreateCheckoutSession } from './inputs/create-checkout-session.input';
+import { CreatePaymentInput } from './inputs/create-payment.input';
 import { CheckoutSession } from './entities/checkoutSession.entity';
 import { UserDocument } from 'src/auth/entities/user.entity';
 import { MovieInput } from './inputs/movieInput.input';
 import { MovieToBuy } from './interfaces/movie-to-buy.interface';
 import Stripe from 'stripe';
+import { PaymentIntentDTO } from './dto/payment-intent.dto';
+import { PaymentIntentRecordsService } from './payment-intent-records.service';
 
 @Injectable()
 export class PaymentsService {
   constructor(
     private moviesService: MoviesService,
     private checkoutSessionService: CheckoutSessionService,
+    private paymentIntentRecordsService: PaymentIntentRecordsService,
   ) {}
 
   async createCheckoutSession(
-    { products }: CreateCheckoutSession,
+    { products }: CreatePaymentInput,
     currentUser: UserDocument,
   ): Promise<CheckoutSession> {
     const line_items = await this.getMoviesToBuy(products);
@@ -82,6 +85,25 @@ export class PaymentsService {
     });
   }
 
+  private async createIntent(
+    moviesToBuy: MovieToBuy[],
+    stripeCustomerId: string,
+  ) {
+    return stripe.paymentIntents.create({
+      amount:
+        moviesToBuy.reduce((acc, movie) => {
+          return acc + movie.movie.price * movie.quantity;
+        }, 0) * 100,
+      currency: 'USD',
+      automatic_payment_methods: {
+        enabled: true,
+      },
+      metadata: this.formatPaymentIntentMetada(moviesToBuy),
+
+      customer: stripeCustomerId,
+    });
+  }
+
   private async createStripeCustomer(user: UserDocument) {
     return stripe.customers.create({
       email: user.email,
@@ -92,5 +114,50 @@ export class PaymentsService {
   private async getStripeCustomer(stripeId: string) {
     const customer = await stripe.customers.retrieve(stripeId);
     return customer as Stripe.Response<Stripe.Customer>;
+  }
+
+  async createPaymentIntent(
+    { products }: CreatePaymentInput,
+    user: UserDocument,
+  ): Promise<PaymentIntentDTO> {
+    const moviesToBuy = await this.getMoviesToBuy(products);
+    let stripeCustomerId: string;
+    if (user.stripeCustomerId) {
+      stripeCustomerId = user.stripeCustomerId;
+    } else {
+      const stripeCustomer = await this.createStripeCustomer(user);
+      user.stripeCustomerId = stripeCustomer.id;
+      user.save();
+      stripeCustomerId = stripeCustomer.id;
+    }
+    const paymentIntent = await this.createIntent(
+      moviesToBuy,
+      stripeCustomerId,
+    );
+
+    await this.paymentIntentRecordsService.create({
+      movies: moviesToBuy.map((item) => ({
+        description: item.movie.description,
+        onSale: item.movie.onSale,
+        price: item.movie.price,
+        title: item.movie.title,
+        _id: item.movie._id,
+        quantity: item.quantity,
+      })),
+      status: paymentIntent.status,
+      stripeId: paymentIntent.id,
+    });
+
+    return {
+      clientSecret: paymentIntent.client_secret,
+    };
+  }
+
+  private formatPaymentIntentMetada(moviesToBuy: MovieToBuy[]) {
+    return moviesToBuy.reduce((acc, movie, index) => {
+      acc[`${index}. quantity: ${movie.quantity}  ${movie.movie.title}`] =
+        movie.movie.stripeProductId;
+      return acc;
+    }, {});
   }
 }

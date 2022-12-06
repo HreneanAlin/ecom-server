@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { UserDocument } from 'src/auth/entities/user.entity';
 import { UsersService } from 'src/auth/users.service';
 import { CreateCheckoutSessionDto } from './dto/create-checkout-session.dto';
-import { UpdateCheckoutSessionDto } from './dto/update-checkout-session.dto';
+import { UpdateStatusDto } from './dto/update-status.dto';
 import {
   CheckoutSession,
   CheckoutSessionDocument,
@@ -30,7 +30,7 @@ export class CheckoutSessionService {
 
   async updateByStripeId(
     stripeSessionId: string,
-    updateCheckoutSessionDto: UpdateCheckoutSessionDto,
+    updateCheckoutSessionDto: UpdateStatusDto,
   ): Promise<CheckoutSession> {
     await this.checkoutSessionModel
       .findOneAndUpdate({ stripeSessionId }, updateCheckoutSessionDto)

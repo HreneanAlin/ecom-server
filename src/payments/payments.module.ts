@@ -9,6 +9,11 @@ import {
 import { MoviesModule } from 'src/movies/movies.module';
 import { CheckoutSessionService } from './checkout-session.service';
 import { AuthModule } from 'src/auth/auth.module';
+import {
+  PaymentIntentRecord,
+  PaymentIntentRecordSchema,
+} from './entities/payment-intent-record.entity';
+import { PaymentIntentRecordsService } from './payment-intent-records.service';
 
 @Module({
   imports: [
@@ -16,9 +21,18 @@ import { AuthModule } from 'src/auth/auth.module';
     MoviesModule,
     MongooseModule.forFeature([
       { name: CheckoutSession.name, schema: CheckoutSessionSchema },
+      {
+        name: PaymentIntentRecord.name,
+        schema: PaymentIntentRecordSchema,
+      },
     ]),
   ],
-  providers: [PaymentsResolver, PaymentsService, CheckoutSessionService],
-  exports: [CheckoutSessionService],
+  providers: [
+    PaymentsResolver,
+    PaymentsService,
+    CheckoutSessionService,
+    PaymentIntentRecordsService,
+  ],
+  exports: [CheckoutSessionService, PaymentIntentRecordsService],
 })
 export class PaymentsModule {}

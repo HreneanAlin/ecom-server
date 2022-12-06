@@ -31,6 +31,10 @@ export class UsersService {
     return this.userModel.findOne({ email }).exec();
   }
 
+  findOneByCustomerId(customerId: string): Promise<UserDocument> {
+    return this.userModel.findOne({ stripeCustomerId: customerId }).exec();
+  }
+
   filterOpenPayments(userDto: UserDto): CheckoutSession[] {
     return userDto.payments.filter((payment) => payment.status === 'open');
   }
