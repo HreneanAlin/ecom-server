@@ -3,6 +3,7 @@ import { Document, Schema as MongooseSchema } from 'mongoose';
 import { CheckoutSession } from 'src/payments/entities/checkoutSession.entity';
 import { MovieWithQuantityDTO } from 'src/movies/dto/movie-with-quantity.dto';
 import { Field, ObjectType } from '@nestjs/graphql';
+import { PaymentIntentRecord } from 'src/payments/entities/payment-intent-record.entity';
 
 @ObjectType()
 @Schema({
@@ -46,6 +47,17 @@ export class User {
     default: [],
   })
   payments: CheckoutSession[];
+
+  @Prop({
+    type: [
+      {
+        type: MongooseSchema.Types.ObjectId,
+        ref: 'PaymentIntentRecord',
+      },
+    ],
+    default: [],
+  })
+  paymentsIntent: PaymentIntentRecord[];
 
   @Field(() => [MovieWithQuantityDTO])
   @Prop(

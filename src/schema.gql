@@ -40,6 +40,13 @@ type MovieWithQuantityDTO {
   quantity: Int!
 }
 
+type PaymentIntentRecord {
+  _id: String!
+  stripeId: String!
+  movies: [MovieDto!]!
+  status: String!
+}
+
 type PaymentIntentDTO {
   clientSecret: String!
 }
@@ -88,6 +95,7 @@ type Query {
   movies: [Movie!]!
   movie(id: String!): Movie!
   checkoutSession(id: String!): CheckoutSession!
+  paymentIntent(id: String!): PaymentIntentRecord!
   me: UserDto!
 }
 
@@ -141,4 +149,8 @@ input CreateUser {
 input SignInLocal {
   email: String!
   password: String!
+}
+
+type Subscription {
+  paymentDone(id: String!): PaymentIntentRecord!
 }

@@ -19,6 +19,10 @@ import { ValidationError } from 'class-validator';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       playground: false,
+      subscriptions: {
+        'graphql-ws': true,
+        'subscriptions-transport-ws': true,
+      },
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
       formatError: (error) => {
         if (error.extensions.code === 'BAD_USER_INPUT') {

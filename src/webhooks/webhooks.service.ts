@@ -8,6 +8,7 @@ import { MoviesService } from 'src/movies/movies.service';
 import { PaymentIntentRecordsService } from 'src/payments/services/payment-intent-records.service';
 import { MovieDto } from 'src/payments/dto/movie.dto';
 import { UserDocument } from 'src/auth/entities/user.entity';
+import { pubsub } from 'src/common/helpers/pubsub';
 @Injectable()
 export class WebhooksService {
   constructor(
@@ -26,6 +27,10 @@ export class WebhooksService {
     if (event.type === 'payment_intent.succeeded') {
       const session = event.data.object as Stripe.PaymentIntent;
       const action = session.metadata.action as string;
+      console.log(
+        '🚀 ~ file: webhooks.service.ts:29 ~ WebhooksService ~ fulfillMoviesPayment ~ action',
+        action,
+      );
 
       switch (action) {
         case 'customCheckout':
@@ -46,11 +51,16 @@ export class WebhooksService {
   private async handleSuccessfulPaymentIntent(
     paymentIntent: Stripe.PaymentIntent,
   ) {
+    console.log(
+      '🚀 ~ file: webhooks.service.ts:53 ~ WebhooksService ~ paymentIntent',
+      paymentIntent.status,
+    );
     const paymentIntentRecord =
       await this.paymentIntentRecordsService.updateStatusByStripeId(
         paymentIntent.id,
         { status: paymentIntent.status },
       );
+    pubsub.publish('paymentDone', { paymentDone: paymentIntentRecord });
 
     const user = await this.usersService.findOneByCustomerId(
       paymentIntent.customer as string,

@@ -79,7 +79,7 @@ export class PaymentsService {
       stripeCustomerId,
     );
 
-    await this.paymentIntentRecordsService.create({
+    const paymentIntentRecord = await this.paymentIntentRecordsService.create({
       movies: moviesToBuy.map((item) => ({
         description: item.movie.description,
         onSale: item.movie.onSale,
@@ -92,6 +92,8 @@ export class PaymentsService {
       stripeId: paymentIntent.id,
     });
 
+    user.paymentsIntent.push(paymentIntentRecord);
+    await user.save();
     return {
       clientSecret: paymentIntent.client_secret,
     };
