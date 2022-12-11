@@ -40,6 +40,7 @@
     "graphql-redis-subscriptions": "^2.5.0",
     "graphql-subscriptions": "^2.0.0",
     "graphql-ws": "^5.11.2",
+    "ioredis": "^5.2.4",
     "mongoose": "^6.6.7",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",

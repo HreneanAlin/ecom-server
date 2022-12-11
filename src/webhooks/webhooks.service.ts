@@ -27,10 +27,6 @@ export class WebhooksService {
     if (event.type === 'payment_intent.succeeded') {
       const session = event.data.object as Stripe.PaymentIntent;
       const action = session.metadata.action as string;
-      console.log(
-        '🚀 ~ file: webhooks.service.ts:29 ~ WebhooksService ~ fulfillMoviesPayment ~ action',
-        action,
-      );
 
       switch (action) {
         case 'customCheckout':
@@ -51,10 +47,6 @@ export class WebhooksService {
   private async handleSuccessfulPaymentIntent(
     paymentIntent: Stripe.PaymentIntent,
   ) {
-    console.log(
-      '🚀 ~ file: webhooks.service.ts:53 ~ WebhooksService ~ paymentIntent',
-      paymentIntent.status,
-    );
     const paymentIntentRecord =
       await this.paymentIntentRecordsService.updateStatusByStripeId(
         paymentIntent.id,
