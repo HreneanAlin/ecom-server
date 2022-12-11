@@ -23,7 +23,7 @@ import {
   UserWithTokensDto,
 } from './dto/user-with-tokens.dto';
 import { SignOutDto } from './dto/sign-out.dto';
-import { decode } from 'jsonwebtoken';
+import { decode, verify } from 'jsonwebtoken';
 import { IJwtPayload } from './interfaces/jwt-payload.interface';
 
 @Injectable()
@@ -106,7 +106,6 @@ export class AuthService {
       _id,
       user.email,
     );
-    console.log(decode(token));
     user.hashRefreshToken = await argon2.hash(newRefreshToken);
     await user.save();
     return {
@@ -130,6 +129,10 @@ export class AuthService {
       'movies.movie',
     ]);
     return mapUserToUserDto(fullUser);
+  }
+
+  decodeJwtToken(token: string): IJwtPayload {
+    return verify(token, JWT_TOKEN_SECRET) as IJwtPayload;
   }
 
   getTokenExpirationDate(token: string) {

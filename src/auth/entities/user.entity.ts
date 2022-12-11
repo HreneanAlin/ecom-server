@@ -1,5 +1,5 @@
 import { Prop, Schema, raw, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 import { CheckoutSession } from 'src/payments/entities/checkoutSession.entity';
 import { MovieWithQuantityDTO } from 'src/movies/dto/movie-with-quantity.dto';
 import { Field, ObjectType } from '@nestjs/graphql';
@@ -11,7 +11,7 @@ import { PaymentIntentRecord } from 'src/payments/entities/payment-intent-record
 })
 export class User {
   @Field(() => String)
-  _id: MongooseSchema.Types.ObjectId;
+  _id: Types.ObjectId;
 
   @Field()
   @Prop()

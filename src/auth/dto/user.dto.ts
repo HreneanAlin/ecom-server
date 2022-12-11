@@ -1,13 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { MovieWithQuantityDTO } from 'src/movies/dto/movie-with-quantity.dto';
 import { CheckoutSession } from 'src/payments/entities/checkoutSession.entity';
-import { Schema as MongooseSchema } from 'mongoose';
+import { Types } from 'mongoose';
 import { User } from '../entities/user.entity';
 
 @ObjectType()
 export class UserDto {
   @Field(() => String)
-  _id: MongooseSchema.Types.ObjectId;
+  _id: Types.ObjectId;
 
   @Field()
   firstName: string;

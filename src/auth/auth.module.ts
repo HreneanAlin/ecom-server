@@ -26,6 +26,6 @@ import { UsersService } from './users.service';
     RefreshTokenStrategy,
     IsEmailUniqueValidatorConstraint,
   ],
-  exports: [UsersService],
+  exports: [UsersService, AuthService],
 })
 export class AuthModule {}

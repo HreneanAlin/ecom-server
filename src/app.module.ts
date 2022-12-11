@@ -12,38 +12,69 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { TokenGuard } from './common/guards';
 import { ValidationError } from 'class-validator';
+
 @Module({
   imports: [
     MoviesModule,
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      playground: false,
-      subscriptions: {
-        'graphql-ws': true,
-        'subscriptions-transport-ws': true,
-      },
-      plugins: [ApolloServerPluginLandingPageLocalDefault()],
-      formatError: (error) => {
-        if (error.extensions.code === 'BAD_USER_INPUT') {
-          const customError = error.extensions.response as {
-            message: ValidationError[];
-          };
-          if (Array.isArray(customError.message)) {
-            return {
-              validationErrors: customError.message.map((mess) => {
-                return {
-                  property: mess.property,
-                  constraints: Object.values(mess.constraints).join(', '),
-                };
-              }),
-              message: error.message,
-              statusCode: 400,
+      useFactory: async () => ({
+        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        playground: false,
+        subscriptions: {
+          'graphql-ws': {
+            onConnect: () => {
+              console.log('graphql-ws');
+            },
+            context: ({ connectionParams }) => {
+              const authorization =
+                connectionParams.Authorization ||
+                connectionParams.authorization ||
+                '';
+              return {
+                req: {
+                  headers: { ...connectionParams, authorization },
+                },
+              };
+            },
+          },
+          'subscriptions-transport-ws': {
+            onConnect: (connectionParams) => {
+              console.log('subscriptions-transport-ws');
+              const authorization =
+                connectionParams.Authorization ||
+                connectionParams.authorization ||
+                '';
+              return {
+                req: {
+                  headers: { ...connectionParams, authorization },
+                },
+              };
+            },
+          },
+        },
+        plugins: [ApolloServerPluginLandingPageLocalDefault()],
+        formatError: (error) => {
+          if (error.extensions.code === 'BAD_USER_INPUT') {
+            const customError = error.extensions.response as {
+              message: ValidationError[];
             };
+            if (Array.isArray(customError.message)) {
+              return {
+                validationErrors: customError.message.map((mess) => {
+                  return {
+                    property: mess.property,
+                    constraints: Object.values(mess.constraints).join(', '),
+                  };
+                }),
+                message: error.message,
+                statusCode: 400,
+              };
+            }
           }
-        }
-        return error;
-      },
+          return error;
+        },
+      }),
     }),
     MongooseModule.forRoot(MONGODB_URL),
     PaymentsModule,

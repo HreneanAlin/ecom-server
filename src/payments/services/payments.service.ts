@@ -91,6 +91,8 @@ export class PaymentsService {
       status: paymentIntent.status,
       stripeId: paymentIntent.id,
     });
+    paymentIntentRecord.user = user;
+    await paymentIntentRecord.save();
 
     user.paymentsIntent.push(paymentIntentRecord);
     await user.save();

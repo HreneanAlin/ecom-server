@@ -11,6 +11,7 @@ import { PaymentIntentRecord } from './entities/payment-intent-record.entity';
 import { PaymentIntentRecordsService } from './services/payment-intent-records.service';
 import { pubsub } from 'src/common/helpers/pubsub';
 import { Public } from 'src/common/decorators/public.decorator';
+import { AuthService } from 'src/auth/auth.service';
 
 @Resolver()
 export class PaymentsResolver {
@@ -18,6 +19,7 @@ export class PaymentsResolver {
     private readonly paymentsService: PaymentsService,
     private readonly checkoutSessionService: CheckoutSessionService,
     private readonly paymentIntentRecordsService: PaymentIntentRecordsService,
+    private readonly authService: AuthService,
   ) {}
 
   @Mutation(() => CheckoutSession)
@@ -51,9 +53,13 @@ export class PaymentsResolver {
     filter(
       payload: { paymentDone: PaymentIntentRecord },
       variables: { id: string },
-      context,
+      context: { req: { user: UserDocument } },
     ) {
-      return payload.paymentDone.stripeId === variables.id;
+      const user = context.req.user;
+      return (
+        payload.paymentDone.user._id.equals(user._id) &&
+        payload.paymentDone.stripeId === variables.id
+      );
     },
   })
   paymentDone(@Args('id') id: string) {

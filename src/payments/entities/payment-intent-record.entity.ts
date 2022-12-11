@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Types } from 'mongoose';
+import { Types, Document } from 'mongoose';
+import { User } from 'src/auth/entities/user.entity';
 import { MovieDto } from '../dto/movie.dto';
 
 @ObjectType()
@@ -42,6 +43,9 @@ export class PaymentIntentRecord {
   @Field()
   @Prop()
   status: string;
+
+  @Prop({ type: Types.ObjectId, ref: User.name })
+  user: User;
 }
 
 export type PaymentIntentRecordDocument = PaymentIntentRecord & Document;
