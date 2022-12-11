@@ -8,7 +8,7 @@ import { MoviesService } from 'src/movies/movies.service';
 import { PaymentIntentRecordsService } from 'src/payments/services/payment-intent-records.service';
 import { MovieDto } from 'src/payments/dto/movie.dto';
 import { UserDocument } from 'src/auth/entities/user.entity';
-import { pubsub } from 'src/common/helpers/pubsub';
+import { redisPubSub } from 'src/common/helpers/redis-pubsub';
 @Injectable()
 export class WebhooksService {
   constructor(
@@ -60,7 +60,7 @@ export class WebhooksService {
         paymentIntent.id,
         { status: paymentIntent.status },
       );
-    pubsub.publish('paymentDone', { paymentDone: paymentIntentRecord });
+    redisPubSub.publish('paymentDone', { paymentDone: paymentIntentRecord });
 
     const user = await this.usersService.findOneByCustomerId(
       paymentIntent.customer as string,

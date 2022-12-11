@@ -11,6 +11,7 @@ export const JWT_TOKEN_SECRET = process.env.JWT_TOKEN_SECRET || '';
 export const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || '';
 
 export const PUBLIC_ROUTERS_KEY = process.env.PUBLIC_ROUTERS_KEY || '';
+export const REDIS_URL = process.env.REDIS_URL || '';
 
 export const TOKEN_EXPIRATION_SECONDS = 15 * 60; // 15 minutes
 export const REFRESH_TOKEN_EXPIRATION_SECONDS = 60 * 60 * 24 * 7; // 7 days

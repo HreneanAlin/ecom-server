@@ -10,8 +10,8 @@ import { PaymentIntentDTO } from './dto/payment-intent.dto';
 import { PaymentIntentRecord } from './entities/payment-intent-record.entity';
 import { PaymentIntentRecordsService } from './services/payment-intent-records.service';
 import { pubsub } from 'src/common/helpers/pubsub';
-import { Public } from 'src/common/decorators/public.decorator';
 import { AuthService } from 'src/auth/auth.service';
+import { redisPubSub } from 'src/common/helpers/redis-pubsub';
 
 @Resolver()
 export class PaymentsResolver {
@@ -57,12 +57,13 @@ export class PaymentsResolver {
     ) {
       const user = context.req.user;
       return (
-        payload.paymentDone.user._id.equals(user._id) &&
+        String(payload.paymentDone.user) === String(user._id) &&
         payload.paymentDone.stripeId === variables.id
       );
     },
   })
   paymentDone(@Args('id') id: string) {
-    return pubsub.asyncIterator('paymentDone');
+    console.info(`Listening for payment completion with stripe id: ${id}`);
+    return redisPubSub.asyncIterator('paymentDone');
   }
 }
