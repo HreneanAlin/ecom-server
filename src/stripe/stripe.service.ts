@@ -1,12 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { MovieToBuy } from '../interfaces/movie-to-buy.interface';
-import { stripe } from 'src/common/stripe';
-import { WEB_URL } from 'src/common/helpers/constants';
+import { MovieToBuy } from 'src/payments/interfaces/movie-to-buy.interface';
+import { STRIPE_WEBHOOK_SECRET, WEB_URL } from 'src/common/helpers/constants';
 import { UserDocument } from 'src/auth/entities/user.entity';
+import { STRIPE_SECRET_KEY } from 'src/common/helpers/constants';
+import { Stripe } from 'stripe';
+const stripe = new Stripe(STRIPE_SECRET_KEY, {
+  apiVersion: '2022-08-01',
+});
 
 @Injectable()
 export class StripeService {
-  async createCheckoutSession(
+  async createPaymentCheckoutSession(
     moviesToBuy: MovieToBuy[],
     stripeCustomerId: string,
   ) {
@@ -50,6 +54,42 @@ export class StripeService {
       customer: stripeCustomerId,
     });
   }
+
+  createProductForSubscription(name: string, description: string) {
+    return stripe.products.create({ name, description });
+  }
+  createProductForMovie(name: string, description: string) {
+    return stripe.products.create({ name, description });
+  }
+
+  createPrice(productId: string, unit_amount: number) {
+    return stripe.prices.create({
+      product: productId,
+      unit_amount: unit_amount * 100,
+      currency: 'usd',
+    });
+  }
+
+  findProduct(id: string) {
+    return stripe.products.retrieve(id);
+  }
+
+  updateProduct(id: string, params: Stripe.ProductUpdateParams) {
+    return stripe.products.update(id, params);
+  }
+
+  updatePrice(id: string, params: Stripe.PriceUpdateParams) {
+    return stripe.prices.update(id, params);
+  }
+
+  constructEvent(payload: Buffer, stripeSignature: string) {
+    return stripe.webhooks.constructEvent(
+      payload,
+      stripeSignature,
+      STRIPE_WEBHOOK_SECRET,
+    );
+  }
+
   private formatPaymentIntentMetada(moviesToBuy: MovieToBuy[]) {
     return moviesToBuy.reduce((acc, movie, index) => {
       acc[`${index}. quantity: ${movie.quantity}  ${movie.movie.title}`] =

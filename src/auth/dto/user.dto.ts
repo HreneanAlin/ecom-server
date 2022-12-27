@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { MovieWithQuantityDTO } from 'src/movies/dto/movie-with-quantity.dto';
-import { CheckoutSession } from 'src/payments/entities/checkoutSession.entity';
+import { CheckoutSession } from 'src/payments/entities/checkout-session.entity';
 import { Types } from 'mongoose';
 import { User } from '../entities/user.entity';
 

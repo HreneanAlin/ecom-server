@@ -8,7 +8,7 @@ import { UpdateStatusDto } from '../dto/update-status.dto';
 import {
   CheckoutSession,
   CheckoutSessionDocument,
-} from '../entities/checkoutSession.entity';
+} from '../entities/checkout-session.entity';
 
 @Injectable()
 export class CheckoutSessionService {

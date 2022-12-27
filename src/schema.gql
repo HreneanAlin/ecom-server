@@ -91,12 +91,31 @@ type SignOutDto {
   success: Boolean!
 }
 
+type AppSubscription {
+  _id: String!
+  name: String!
+  description: String!
+
+  """price in USD"""
+  price: Float!
+  plan: SubscriptionPlan!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+enum SubscriptionPlan {
+  Year
+  HalfYear
+  Month
+}
+
 type Query {
   movies: [Movie!]!
   movie(id: String!): Movie!
   checkoutSession(id: String!): CheckoutSession!
   paymentIntent(id: String!): PaymentIntentRecord!
   me: UserDto!
+  appSubscriptions: [AppSubscription!]!
 }
 
 type Mutation {
@@ -109,6 +128,7 @@ type Mutation {
   signInLocal(signInLocal: SignInLocal!): UserWithTokensDto!
   refreshTokens: TokensDto!
   signOut: SignOutDto!
+  createAppSubscription(CreateAppSubscriptionInput: CreateAppSubscriptionInput!): AppSubscription!
 }
 
 input CreateMovieInput {
@@ -149,6 +169,13 @@ input CreateUser {
 input SignInLocal {
   email: String!
   password: String!
+}
+
+input CreateAppSubscriptionInput {
+  name: String!
+  description: String!
+  price: Float!
+  plan: SubscriptionPlan!
 }
 
 type Subscription {

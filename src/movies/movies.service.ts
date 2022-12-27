@@ -4,24 +4,23 @@ import { UpdateMovieInput } from './inputs/update-movie.input';
 import { InjectModel } from '@nestjs/mongoose';
 import { Movie, MovieDocument } from './entities/movie.entity';
 import { Model } from 'mongoose';
-import { CheckoutSession } from 'src/payments/entities/checkoutSession.entity';
-import { stripe } from '../common/stripe';
+import { CheckoutSession } from 'src/payments/entities/checkout-session.entity';
+import { StripeService } from 'src/stripe/stripe.service';
 @Injectable()
 export class MoviesService {
   constructor(
     @InjectModel(Movie.name) private movieModel: Model<MovieDocument>,
+    private readonly stripeService: StripeService,
   ) {}
   async create(createMovieInput: CreateMovieInput): Promise<Movie> {
-    const product = await stripe.products.create({
-      name: createMovieInput.title,
-      description: createMovieInput.description,
-    });
-    const stripePrice = await stripe.prices.create({
-      product: product.id,
-      unit_amount: createMovieInput.price * 100,
-      currency: 'usd',
-    });
-    console.log(product.id);
+    const product = await this.stripeService.createProductForMovie(
+      createMovieInput.title,
+      createMovieInput.description,
+    );
+    const stripePrice = await this.stripeService.createPrice(
+      product.id,
+      createMovieInput.price,
+    );
     return this.movieModel.create({
       ...createMovieInput,
       stripePriceId: stripePrice.id,
@@ -49,28 +48,27 @@ export class MoviesService {
       updateMovieInput.description
     ) {
       const movieToUpdate = await this.findOne(id);
-      const movieProduct = await stripe.products.retrieve(
+      const movieProduct = await this.stripeService.findProduct(
         movieToUpdate.stripeProductId,
       );
       if (updateMovieInput.title) {
-        await stripe.products.update(movieToUpdate.stripeProductId, {
+        await this.stripeService.updateProduct(movieToUpdate.stripeProductId, {
           name: movieToUpdate.title,
         });
       }
       if (updateMovieInput.description) {
-        await stripe.products.update(movieToUpdate.stripeProductId, {
+        await this.stripeService.updateProduct(movieToUpdate.stripeProductId, {
           description: movieToUpdate.description,
         });
       }
       if (updateMovieInput.price) {
-        await stripe.prices.update(movieToUpdate.stripePriceId, {
+        await this.stripeService.updatePrice(movieToUpdate.stripePriceId, {
           active: false,
         });
-        const newPrice = await stripe.prices.create({
-          product: movieProduct.id,
-          unit_amount: updateMovieInput.price * 100,
-          currency: 'usd',
-        });
+        const newPrice = await this.stripeService.createPrice(
+          movieProduct.id,
+          updateMovieInput.price,
+        );
 
         await this.movieModel
           .findByIdAndUpdate(id, {

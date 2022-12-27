@@ -1,6 +1,6 @@
 import { Prop, Schema, raw, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema, Types } from 'mongoose';
-import { CheckoutSession } from 'src/payments/entities/checkoutSession.entity';
+import { CheckoutSession } from 'src/payments/entities/checkout-session.entity';
 import { MovieWithQuantityDTO } from 'src/movies/dto/movie-with-quantity.dto';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { PaymentIntentRecord } from 'src/payments/entities/payment-intent-record.entity';

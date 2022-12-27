@@ -12,6 +12,8 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { TokenGuard } from './common/guards';
 import { ValidationError } from 'class-validator';
+import { AppSubscriptionsModule } from './app-subscriptions/app-subscriptions.module';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -80,6 +82,8 @@ import { ValidationError } from 'class-validator';
     PaymentsModule,
     WebhooksModule,
     AuthModule,
+    AppSubscriptionsModule,
+    StripeModule,
   ],
   providers: [
     {

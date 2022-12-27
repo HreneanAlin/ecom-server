@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { MoviesService } from 'src/movies/movies.service';
 import { CheckoutSessionService } from './checkout-session.service';
 import { CreatePaymentInput } from '../inputs/create-payment.input';
-import { CheckoutSession } from '../entities/checkoutSession.entity';
+import { CheckoutSession } from '../entities/checkout-session.entity';
 import { UserDocument } from 'src/auth/entities/user.entity';
 import { MovieInput } from '../inputs/movieInput.input';
 import { MovieToBuy } from '../interfaces/movie-to-buy.interface';
 import { PaymentIntentDTO } from '../dto/payment-intent.dto';
 import { PaymentIntentRecordsService } from './payment-intent-records.service';
-import { StripeService } from './stripe.service';
+import { StripeService } from 'src/stripe/stripe.service';
 
 @Injectable()
 export class PaymentsService {
@@ -35,7 +35,7 @@ export class PaymentsService {
       currentUser.save();
       stripeCustomerId = stripeCustomer.id;
     }
-    const session = await this.stripeService.createCheckoutSession(
+    const session = await this.stripeService.createPaymentCheckoutSession(
       line_items,
       stripeCustomerId,
     );

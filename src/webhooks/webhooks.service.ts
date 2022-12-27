@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { STRIPE_WEBHOOK_SECRET } from 'src/common/helpers/constants';
 import { CheckoutSessionService } from 'src/payments/services/checkout-session.service';
-import { stripe } from 'src/common/stripe';
 import { Stripe } from 'stripe';
 import { UsersService } from 'src/auth/users.service';
 import { MoviesService } from 'src/movies/movies.service';
@@ -9,6 +7,7 @@ import { PaymentIntentRecordsService } from 'src/payments/services/payment-inten
 import { MovieDto } from 'src/payments/dto/movie.dto';
 import { UserDocument } from 'src/auth/entities/user.entity';
 import { redisPubSub } from 'src/common/helpers/redis-pubsub';
+import { StripeService } from 'src/stripe/stripe.service';
 @Injectable()
 export class WebhooksService {
   constructor(
@@ -16,13 +15,10 @@ export class WebhooksService {
     private readonly usersService: UsersService,
     private readonly moviesService: MoviesService,
     private readonly paymentIntentRecordsService: PaymentIntentRecordsService,
+    private readonly stripeService: StripeService,
   ) {}
   async fulfillMoviesPayment(stripeSignature: string, payload: Buffer) {
-    const event = stripe.webhooks.constructEvent(
-      payload,
-      stripeSignature,
-      STRIPE_WEBHOOK_SECRET,
-    );
+    const event = this.stripeService.constructEvent(payload, stripeSignature);
 
     if (event.type === 'payment_intent.succeeded') {
       const session = event.data.object as Stripe.PaymentIntent;

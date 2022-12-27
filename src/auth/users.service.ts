@@ -4,7 +4,7 @@ import { Model } from 'mongoose';
 import { CreateUser } from './inputs/create-user.input';
 import { User, UserDocument } from './entities/user.entity';
 import { UserDto } from './dto/user.dto';
-import { CheckoutSession } from 'src/payments/entities/checkoutSession.entity';
+import { CheckoutSession } from 'src/payments/entities/checkout-session.entity';
 
 @Injectable()
 export class UsersService {

@@ -4,9 +4,10 @@ import { WebhooksController } from './webhooks.controller';
 import { PaymentsModule } from 'src/payments/payments.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { MoviesModule } from 'src/movies/movies.module';
+import { StripeModule } from 'src/stripe/stripe.module';
 
 @Module({
-  imports: [PaymentsModule, AuthModule, MoviesModule],
+  imports: [StripeModule, PaymentsModule, AuthModule, MoviesModule],
   controllers: [WebhooksController],
   providers: [WebhooksService],
 })

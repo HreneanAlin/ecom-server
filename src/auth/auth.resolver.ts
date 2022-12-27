@@ -19,7 +19,7 @@ import { IUserRefreshDTO } from './interfaces/user-refresh.interface';
 import { UserWithTokensDto } from './dto/user-with-tokens.dto';
 import { UserDto } from './dto/user.dto';
 import { User, UserDocument } from './entities/user.entity';
-import { CheckoutSession } from 'src/payments/entities/checkoutSession.entity';
+import { CheckoutSession } from 'src/payments/entities/checkout-session.entity';
 import { UsersService } from './users.service';
 
 @Resolver(() => UserDto)

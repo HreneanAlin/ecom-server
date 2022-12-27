@@ -1,7 +1,7 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field } from '@nestjs/graphql';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Schema as MongooseSchema, Types } from 'mongoose';
-import { CheckoutSession } from 'src/payments/entities/checkoutSession.entity';
+import { CheckoutSession } from 'src/payments/entities/checkout-session.entity';
 
 @ObjectType()
 @Schema()
